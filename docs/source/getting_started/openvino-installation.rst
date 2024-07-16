@@ -81,6 +81,26 @@ OpenVINO best known configuration is:
     $ VLLM_OPENVINO_KVCACHE_SPACE=100 VLLM_OPENVINO_CPU_KV_CACHE_PRECISION=u8 VLLM_OPENVINO_ENABLE_QUANTIZED_WEIGHTS=ON \
         python3 vllm/benchmarks/benchmark_throughput.py --model meta-llama/Llama-2-7b-chat-hf --dataset vllm/benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json --enable-chunked-prefill --max-num-batched-tokens 256
 
+
+.. _openvino_local_models:
+
+Using local OpenVINO models
+---------------------------
+
+To speed up model loading, or to use specific model compression options, convert the model offline and load the OpenVINO model with vLLM directly. To do so, run the following command in the environment where you installed vLLM with OpenVINO
+
+.. code-block:: console
+
+    $ optimum-cli export openvino -m tiiuae/falcon-7b --weight-format int8 falcon-7b-ov-int8
+
+See ``optimum-cli export openvino --help`` for all options.
+
+When converting a local model, a task needs to be specified. Use ``--text-generation-with-past``:
+
+    $ optimum-cli export openvino -m local-model --weight-format int8 --task text-generation-with-past local-model-ov
+
+To use the local model with vLLM, just provide the path to the model directory, for example ``/data/models/falcon-7b-ov-int8`` to the ``--model`` parameter. 
+
 .. _openvino_backend_limitations:
 
 Limitations
